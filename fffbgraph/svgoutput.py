@@ -75,7 +75,7 @@ class Text(Elem):
     self.AddChild(text)
 
 class PlayerGroup(Elem):
-  def __init__(self, player, team_name=u'BOS',
+  def __init__(self, player, team,
                xloc=HMARGIN, yloc=VMARGIN, 
                year_start=2000, year_end=2009,
                fill_team='#BF0808', fill_not='#dddddd'):
@@ -88,16 +88,16 @@ class PlayerGroup(Elem):
     
     # Played before date range.
     if player.min_year() < year_start:
-      fill = fill_team if team_name in player.years.get(year_start, []) else fill_not
+      fill = fill_team if team.team_id in player.years.get(year_start, []) else fill_not
       self.elements.append(ContinuedLeftBox(self.xloc, self.yloc, fill))
 
     for year in range(year_start, year_end):
-      fill = fill_team if team_name in player.years.get(year, []) else fill_not
+      fill = fill_team if team.team_id in player.years.get(year, []) else fill_not
       if year in player.years:
         self.AddBox(year, year_start, fill)
 
     if player.max_year() > year_end:
-      fill = fill_team if team_name in player.years.get(year_end, []) else fill_not
+      fill = fill_team if team.team_id in player.years.get(year_end, []) else fill_not
       self.elements.append(ContinuedRightBox(
           self.xloc + (year_end - year_start + 1) * BOX_HTOTAL,
           self.yloc, fill))
@@ -119,7 +119,7 @@ def AddYears(doc, year_start, year_end):
 def print_team(team, year_start, year_end, filter_players=True):
   d = Document()
 
-  header = "Foo!"
+  header = "%s: %i-%i" % (team.team_id, year_start, year_end)
   # Set up background.
   d.AddChild(Rect(x=0, y=0, width='100%', height='100%', fill='gray'))
   d.AddChild(Text(y=50, x=400, size=24, family='Verdana',
@@ -132,7 +132,7 @@ def print_team(team, year_start, year_end, filter_players=True):
 
   for i, player in enumerate(team.players):
     d.AddChild(PlayerGroup(
-        player,
+        player, team,
         yloc=VMARGIN + BOX_VTOTAL * (i + 1),
         year_start=int(year_start), year_end=int(year_end)))
   print d

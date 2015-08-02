@@ -1,0 +1,5 @@
+*\.svg
+*\.pyc
+*~
+harveyjdb.py
+*\.pickle*

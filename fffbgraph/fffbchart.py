@@ -4,6 +4,8 @@ import sys
 import harveyjdb
 import svgoutput
 
+# TODO: Autodetect years
+
 YEAR_TO_ALL = ("select * from batting join master using (playerid) where"
 " teamid = '%s' and yearid = '%s'")
 PLAYER_TO_PLAYER_YEARS = "select * from batting where playerid='%s' order by yearid;"
@@ -69,8 +71,6 @@ class Team(object):
         for p in self.players:
             for y in p.years.keys():
                 start_year = min(start_year, y)
-        ## Override to truncate the table width for now.
-        #start_year = int(year) - 7
 
         # Print the header
         print " " * 25, 
@@ -107,8 +107,9 @@ def print_team(team_name, year):
     team.print_team()
 
 def print_svg(team_name, year):
+    year = int(year)
     team = pickle.load(open(get_filename(team_name, year)))
-    svgoutput.print_team(team, 2000, 2009)
+    svgoutput.print_team(team, year - 5, year + 5)
 
 if __name__ == "__main__":
     if sys.argv[1] == "load": load_team(sys.argv[2], sys.argv[3])
